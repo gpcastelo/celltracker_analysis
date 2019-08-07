@@ -45,3 +45,7 @@ mean_track=mean(track_lengths);
 histogram(track_lengths)
 title('Length in frames of tracks')
 xlabel('Length (# of frames)'); ylabel('Count')
+
+%%%%%%%%%%%%%%%%%%%% Velocities: %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+vel_x=diff(matrix_x)/dt;vel_y=diff(matrix_y)/dt; %microns/s
+%vel_x=matrix_x*3600;vel_y=matrix_y*3600;        %microns/h
