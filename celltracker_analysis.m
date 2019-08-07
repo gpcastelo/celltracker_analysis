@@ -1,6 +1,6 @@
 clear all
 close all
-frames=120;
+frames=60;
 dt=2*15*60; %time interval in seconds
 pixelsize=0.55; %pix/micron
 path="C:\Users\G-mo10\Desktop\Test images nuclei Agata\CellTracker results\";
@@ -12,7 +12,7 @@ matrix_x=nan(frames,cells); matrix_y=matrix_x;
 %%%%%%%Fills matrices of positions: cell 0 | cell 1 | cell 2 | etc.:%%%%%%
 for jj=1:cells
     kk=1;
-for ii=1:length(pos)
+for ii=1:2:length(pos)
     if pos(ii,4)==jj
         matrix_x(kk,jj)=pos(ii,1)/pixelsize; %in microns
         matrix_y(kk,jj)=pos(ii,2)/pixelsize; %in microns
@@ -32,3 +32,4 @@ end
 % end
 % title('Cell trajectories')
 % xlabel('Microns'); ylabel('Microns')
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
