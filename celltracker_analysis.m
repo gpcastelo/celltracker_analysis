@@ -33,3 +33,12 @@ end
 % title('Cell trajectories')
 % xlabel('Microns'); ylabel('Microns')
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%Separate tracks between short and long:
+%Get the length of each track:
+track_lengths=[];
+for ll=1:cells
+single_track=length(matrix_x(:,ll))-sum(isnan(matrix_x(:,ll)));
+track_lengths=[track_lengths single_track];
+end
+mean_track=mean(track_lengths);
