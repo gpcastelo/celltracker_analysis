@@ -21,14 +21,14 @@ for ii=1:length(pos)
 end
 end
 %%%%%%%Plots positions:%%%%%%%%%
-sz=100; a = (1:frames)'; b = num2str(flipud(a)); c = cellstr(b);
-for ll=1:cells
-scatter(matrix_x(:,ll),matrix_y(:,ll),sz,'filled')
-text(matrix_x(:,ll)-3.5, matrix_y(:,ll)+.5, c,'Color','white','FontWeight','bold')
-hold on
-plot(matrix_x(:,ll),matrix_y(:,ll))
-hold on
-%axis([0 200 0 120])
-end
-title('Cell trajectories')
-xlabel('Microns'); ylabel('Microns')
+% sz=100; a = (1:frames)'; b = num2str(flipud(a)); c = cellstr(b);
+% for ll=1:cells
+% scatter(matrix_x(:,ll),matrix_y(:,ll),sz,'filled')
+% text(matrix_x(:,ll)-3.5, matrix_y(:,ll)+.5, c,'Color','white','FontWeight','bold')
+% hold on
+% plot(matrix_x(:,ll),matrix_y(:,ll))
+% hold on
+% %axis([0 200 0 120])
+% end
+% title('Cell trajectories')
+% xlabel('Microns'); ylabel('Microns')
