@@ -42,3 +42,6 @@ single_track=length(matrix_x(:,ll))-sum(isnan(matrix_x(:,ll)));
 track_lengths=[track_lengths single_track];
 end
 mean_track=mean(track_lengths);
+histogram(track_lengths)
+title('Length in frames of tracks')
+xlabel('Length (# of frames)'); ylabel('Count')
