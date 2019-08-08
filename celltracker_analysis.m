@@ -42,15 +42,33 @@ for ll=1:CELLS
 single_track=length(matrix_x(:,ll))-sum(isnan(matrix_x(:,ll)));
 track_lengths=[track_lengths single_track];
 end
-clear sincle_track ll
-mean_track=mean(track_lengths);
-% histogram(track_lengths)
-% title('Length in frames of tracks')
-% xlabel('Length (# of frames)'); ylabel('Count')
+clear single_track ll
+disp('Average length of track in number of frames:')
+mean_track=mean(track_lengths)
+disp('Average length of track in seconds:')
+mean_track_seconds=mean_track*dt
+histogram(track_lengths)
+title('Length in frames of tracks')
+xlabel('Length (# of frames)'); ylabel('Count')
 
 %%%%%%%%%%%%%%%%%%%% Velocities: %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+disp('Velocities in microns/s.')
 vel_x=diff(matrix_x)/dt;vel_y=diff(matrix_y)/dt; %microns/s
 %vel_x=matrix_x*3600;vel_y=matrix_y*3600;        %microns/h
+%Magnitude:
+vel_mag=sqrt(vel_x.^2+vel_y.^2);
+%Average:
+disp('Average velocity for each cell:')
+vel_cell_avg=nanmean(vel_mag) %average velocity for each cell
+dummy_vector_for_avg_vel=[];
+for ii=1:frames-1
+    for jj=1:CELLS
+        dummy_vector_for_avg_vel=[dummy_vector_for_avg_vel vel_mag(ii,jj)];
+    end
+end
+disp('Average velocity of all cells:')
+vel_total_avg=nanmean(dummy_vector_for_avg_vel) %average velocity of all cells
+clear ii jj dummy_vector_for_avg_vel
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%% MSD: %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
