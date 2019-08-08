@@ -47,6 +47,7 @@ disp('Average length of track in number of frames:')
 mean_track=mean(track_lengths)
 disp('Average length of track in seconds:')
 mean_track_seconds=mean_track*dt
+figure
 histogram(track_lengths)
 title('Length in frames of tracks')
 xlabel('Length (# of frames)'); ylabel('Count')
@@ -87,6 +88,11 @@ clear mm X time
 %Initiate msd analyzer (2 means 2D):
 ma = msdanalyzer(2, SPACE_UNITS, TIME_UNITS);
 ma = ma.addAll(tracks);
+%Plot tracks:
+figure
+ma.plotTracks;
+ma.labelPlotTracks;
+title('Cell trajectories')
 %Calculates msd:
 ma = ma.computeMSD;
 meansqdis=ma.msd;
