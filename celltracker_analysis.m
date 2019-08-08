@@ -20,6 +20,7 @@ for ii=1:2:length(pos)
     end
 end
 end
+clear ii jj kk
 %%%%%%%Plots positions:%%%%%%%%%
 % sz=100; a = (1:frames)'; b = num2str(flipud(a)); c = cellstr(b);
 % for ll=1:CELLS
@@ -41,6 +42,7 @@ for ll=1:CELLS
 single_track=length(matrix_x(:,ll))-sum(isnan(matrix_x(:,ll)));
 track_lengths=[track_lengths single_track];
 end
+clear sincle_track ll
 mean_track=mean(track_lengths);
 % histogram(track_lengths)
 % title('Length in frames of tracks')
@@ -63,9 +65,18 @@ for mm = 1 : CELLS
     % Store
     tracks{mm} = [time X];
 end
+clear mm X time
 %Initiate msd analyzer (2 means 2D):
 ma = msdanalyzer(2, SPACE_UNITS, TIME_UNITS);
-% This works:
 ma = ma.addAll(tracks);
-% Indeed:
-disp(ma)
+%Calculates msd:
+ma = ma.computeMSD;
+meansqdis=ma.msd;
+%Plot weighted average over all MSD curves with errorbar:
+figure
+ma.plotMeanMSD(gca, true)
+mmsd = ma.getMeanMSD;
+t = mmsd(:,1);
+x = mmsd(:,2);
+dx = mmsd(:,3) ./ sqrt(mmsd(:,4));
+errorbar(t, x, dx, 'k')
