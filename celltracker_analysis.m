@@ -4,18 +4,31 @@ frames=60;
 dt=2*15*60; %time interval in seconds
 pixelsize=0.55; %pix/micron
 path="C:\Users\G-mo10\Desktop\Test images nuclei Agata\CellTracker results\";
-filename = "TracksCoordinates_C0506A1R3_007.mat";
+filename = "TracksCoordinates_C1005A1R3_006.mat";
 filename=path+filename;
 load(filename);
 CELLS=pos(end:end);
 matrix_x=nan(frames,CELLS); matrix_y=matrix_x;
-%%%%%%%Fills matrices of positions: cell 0 | cell 1 | cell 2 | etc.:%%%%%%
+%%%%%%%Fills matrices of positions: cell 1 | cell 2 | cell 3 | etc.:%%%%%%
 for jj=1:CELLS
     kk=1;
 for ii=1:2:length(pos)
     if pos(ii,4)==jj
         matrix_x(kk,jj)=pos(ii,1)/pixelsize; %in microns
         matrix_y(kk,jj)=pos(ii,2)/pixelsize; %in microns
+        kk=kk+1;
+    end
+end
+end
+clear ii jj kk
+matrix_x_for_frameav=nan(CELLS,2*frames); matrix_y_for_frameav=matrix_x_for_frameav;
+%%%%%%%Fills matrices of positions: frame 1 | frame 2 | frame 3 | etc.:%%%%%%
+for jj=1:2:(2*frames)
+    kk=1;
+for ii=1:length(pos)
+    if pos(ii,3)==jj
+        matrix_x_for_frameav(kk,jj)=pos(ii,1)/pixelsize; %in microns
+        matrix_y_for_frameav(kk,jj)=pos(ii,2)/pixelsize; %in microns
         kk=kk+1;
     end
 end
@@ -56,11 +69,31 @@ xlabel('Length (# of frames)'); ylabel('Count')
 disp('Velocities in microns/s.')
 vel_x=diff(matrix_x)/dt;vel_y=diff(matrix_y)/dt; %microns/s
 %vel_x=matrix_x*3600;vel_y=matrix_y*3600;        %microns/h
-%Magnitude:
+% % % % % % %Magnitude:
 vel_mag=sqrt(vel_x.^2+vel_y.^2);
-%Average:
-disp('Average velocity for each cell:')
-vel_cell_avg=nanmean(vel_mag) %average velocity for each cell
+% % % % % % %Average:
+%disp('Average velocity for each cell:')
+vel_cell_avg=nanmean(vel_mag); %average velocity for each cell
+% figure
+% plot(vel_cell_avg,'b')
+% title('Average velocity for each cell')
+% xlabel('Cell'); ylabel('Velocity (\mu m/s)')
+% % % % % % %For each frame:
+vel_x_frame=diff(matrix_x_for_frameav)/dt; vel_y_frame=diff(matrix_y_for_frameav)/dt;
+vel_frame=sqrt(vel_x_frame.^2+vel_y_frame.^2);
+[~,widmat]=size(matrix_x_for_frameav);
+vel_frame_avg=[];
+for aa=1:2:widmat
+    vel_avg_single_frame=nanmean(vel_frame(:,aa));
+    vel_frame_avg=[vel_frame_avg vel_avg_single_frame];
+end
+clear aa widmat vel_avg_single_frame
+%disp('Average velocity for each frame:')
+%disp(vel_frame_avg)
+figure
+plot(vel_frame_avg,'k')
+title('Average velocity for each frame')
+xlabel('Frame'); ylabel('Velocity (\mu m/s)')
 dummy_vector_for_avg_vel=[];
 for ii=1:frames-1
     for jj=1:CELLS
