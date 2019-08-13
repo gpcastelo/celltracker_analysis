@@ -23,8 +23,18 @@ for ii=1:length(pos)
 end
 end
 clear ii jj kk
-matrix_x_for_frameav=nan(CELLS,2*frames); matrix_y_for_frameav=matrix_x_for_frameav;
+%%%%%%%Polar coordinates: rho=sqrt(x^2+y^2); phi=atan2(y,x)
+matrix_rho=sqrt(matrix_x.^2+matrix_y.^2); %microns
+[len_x,wid_x]=size(matrix_rho); 
+matrix_phi=nan(frames,CELLS);
+for ii=1:len_x
+    for jj=1:wid_x
+        matrix_phi(ii,jj)=atan2(matrix_y(ii,jj),matrix_x(ii,jj)); %rad
+    end
+end
+clear ii jj len_x wid_x
 %%%%%%%Fills matrices of positions: frame 1 | frame 2 | frame 3 | etc.:%%%%%%
+matrix_x_for_frameav=nan(CELLS,2*frames); matrix_y_for_frameav=matrix_x_for_frameav;
 for jj=1:2:(2*frames)
     kk=1;
 for ii=1:length(pos)
