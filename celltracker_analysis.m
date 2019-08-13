@@ -9,13 +9,15 @@ filename=path+filename;
 load(filename);
 CELLS=pos(end:end);
 matrix_x=nan(frames,CELLS); matrix_y=matrix_x;
+%dummy_array_frames=[];
 %%%%%%%Fills matrices of positions: cell 1 | cell 2 | cell 3 | etc.:%%%%%%
 for jj=1:CELLS
     kk=1;
-for ii=1:2:length(pos)
-    if pos(ii,4)==jj
+for ii=1:length(pos)
+    if pos(ii,4)==jj && mod(pos(ii,3),2)==1
         matrix_x(kk,jj)=pos(ii,1)/pixelsize; %in microns
         matrix_y(kk,jj)=pos(ii,2)/pixelsize; %in microns
+        %dummy_array_frames=[dummy_array_frames pos(ii,3)];
         kk=kk+1;
     end
 end
