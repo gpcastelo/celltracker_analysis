@@ -4,7 +4,7 @@ frames=60;
 dt=2*15*60; %time interval in seconds
 pixelsize=0.55; %pix/micron
 path="C:\Users\G-mo10\Desktop\Test images nuclei Agata\CellTracker results\";
-filename = "TracksCoordinates_C1005A1R3_006.mat";
+filename = "TracksCoordinates_H1005B1R4_010.mat";
 filename=path+filename;
 load(filename);
 CELLS=pos(end:end);
@@ -69,16 +69,16 @@ track_lengths=[track_lengths single_track];
 end
 clear single_track ll
 disp('Average length of track in number of frames:')
-mean_track=mean(track_lengths)
+mean_track=mean(track_lengths*2)
 disp('Average length of track in seconds:')
 mean_track_seconds=mean_track*dt
 figure
-histogram(track_lengths)
+histogram(track_lengths*2)
 title('Length in frames of tracks')
 xlabel('Length (# of frames)'); ylabel('Count')
 
 %%%%%%%%%%%%%%%%%%%% Velocities: %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-disp('Velocities in microns/s.')
+%disp('Velocities in microns/s.')
 vel_x=diff(matrix_x)/dt;vel_y=diff(matrix_y)/dt; %microns/s
 %vel_x=matrix_x*3600;vel_y=matrix_y*3600;        %microns/h
 % % % % % % %Magnitude:
@@ -103,7 +103,7 @@ clear aa widmat vel_avg_single_frame
 %disp('Average velocity for each frame:')
 %disp(vel_frame_avg)
 figure
-plot(vel_frame_avg,'k')
+plot(1:2:120,vel_frame_avg,'k')
 title('Average velocity for each frame')
 xlabel('Frame'); ylabel('Velocity (\mu m/s)')
 dummy_vector_for_avg_vel=[];
@@ -138,6 +138,7 @@ figure
 ma.plotTracks;
 ma.labelPlotTracks;
 title('Cell trajectories')
+xlabel('X (\mu m)'); ylabel('Y (\mu m)')
 %Calculates msd:
 ma = ma.computeMSD;
 meansqdis=ma.msd;
