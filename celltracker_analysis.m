@@ -4,7 +4,7 @@ frames=60;
 dt=2*15*60; %time interval in seconds
 pixelsize=0.55; %pix/micron
 path="C:\Users\G-mo10\Desktop\Test images nuclei Agata\CellTracker results\";
-filename = "TracksCoordinates_H1005B1R4_010.mat";
+filename = "TracksCoordinates_C0506A1R3_007.mat";
 filename=path+filename;
 load(filename);
 CELLS=pos(end:end);
@@ -19,6 +19,8 @@ for ii=1:length(pos)
         matrix_y(kk,jj)=pos(ii,2)/pixelsize; %in microns
         %dummy_array_frames=[dummy_array_frames pos(ii,3)];
         kk=kk+1;
+    elseif pos(ii,4)==jj+1
+        break
     end
 end
 end
@@ -150,3 +152,9 @@ t = mmsd(:,1);
 x = mmsd(:,2);
 dx = mmsd(:,3) ./ sqrt(mmsd(:,4));
 errorbar(t, x, dx, 'k')
+
+%%%%%Velocities autocorrelation:
+ma = ma.computeVCorr;
+ma.vcorr
+figure
+ma.plotMeanVCorr
