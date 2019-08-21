@@ -9,7 +9,6 @@ filename=path+filename;
 load(filename);
 CELLS=pos(end:end);
 matrix_x=nan(frames,CELLS); matrix_y=matrix_x;
-%dummy_array_frames=[];
 %%%%%%%Fills matrices of positions: cell 1 | cell 2 | cell 3 | etc.:%%%%%%
 for jj=1:CELLS
     kk=1;
@@ -17,7 +16,6 @@ for ii=1:length(pos)
     if pos(ii,4)==jj && mod(pos(ii,3),2)==1
         matrix_x(kk,jj)=pos(ii,1)/pixelsize; %in microns
         matrix_y(kk,jj)=pos(ii,2)/pixelsize; %in microns
-        %dummy_array_frames=[dummy_array_frames pos(ii,3)];
         kk=kk+1;
     elseif pos(ii,4)==jj+1
         break
@@ -25,6 +23,30 @@ for ii=1:length(pos)
 end
 end
 clear ii jj kk
+%%%%%%%%%%Now for the primary and secondary cells matrix:
+%Primary cells (first frame <=16):
+matrix_x_primary=nan(frames*2,CELLS); matrix_y_primary=matrix_x_primary;
+% ii=1; kk=1;
+% for jj=1:CELLS
+%     if pos(ii,3)<=16
+%         for ll=0:120
+%             if pos(ii+ll,4)==jj && mod(pos(ii+ll,3),2)==1
+%                 matrix_x_primary(kk+ll,jj)=pos(ii+ll,1);%/pixelsize;
+%                 matrix_y_primary(kk+ll,jj)=pos(ii+ll,2);%/pixelsize;
+%             elseif pos(ii,4)==jj+1
+%                 break
+%             end
+%         end
+%         ii=ii+ll;
+%     end
+%     ii=ii+1;
+%     if ii>length(pos)
+%         break
+%     end
+% end
+% clear ii jj kk ll
+%Secondary cells:
+matrix_x_daughters=nan(frames,CELLS); matrix_y_daughters=matrix_x_daughters;
 %%%%%%%Polar coordinates: rho=sqrt(x^2+y^2); phi=atan2(y,x)
 matrix_rho=sqrt(matrix_x.^2+matrix_y.^2); %microns
 [len_x,wid_x]=size(matrix_rho); 
@@ -71,11 +93,11 @@ track_lengths=[track_lengths single_track];
 end
 clear single_track ll
 disp('Average length of track in number of frames:')
-mean_track=mean(track_lengths*2)
+mean_track=mean(track_lengths)
 disp('Average length of track in seconds:')
 mean_track_seconds=mean_track*dt
 figure
-histogram(track_lengths*2)
+histogram(track_lengths)
 title('Length in frames of tracks')
 xlabel('Length (# of frames)'); ylabel('Count')
 
