@@ -6,47 +6,40 @@ pixelsize=0.55; %pix/micron
 path="C:\Users\G-mo10\Desktop\Test images nuclei Agata\CellTracker results\";
 filename = "TracksCoordinates_C0506A1R3_007.mat";
 filename=path+filename;
-load(filename);
+load(filename); save_pos=pos;
 CELLS=pos(end:end);
-matrix_x=nan(frames,CELLS); matrix_y=matrix_x;
+matrix_x=nan(frames,CELLS); matrix_y=matrix_x; dummy_frames=nan(frames,CELLS);
 %%%%%%%Fills matrices of positions: cell 1 | cell 2 | cell 3 | etc.:%%%%%%
 for jj=1:CELLS
     kk=1;
-for ii=1:length(pos)
-    if pos(ii,4)==jj && mod(pos(ii,3),2)==1
-        matrix_x(kk,jj)=pos(ii,1)/pixelsize; %in microns
-        matrix_y(kk,jj)=pos(ii,2)/pixelsize; %in microns
-        kk=kk+1;
-    elseif pos(ii,4)==jj+1
-        break
+    for ii=1:length(pos)
+        if pos(ii,4)==jj && mod(pos(ii,3),2)==1
+            matrix_x(kk,jj)=pos(ii,1);%/pixelsize; %in microns
+            matrix_y(kk,jj)=pos(ii,2);%/pixelsize; %in microns
+            dummy_frames(kk,jj)=pos(ii,3);
+            kk=kk+1;
+        elseif pos(ii,4)==jj+1
+            break
+        end
     end
-end
 end
 clear ii jj kk
 %%%%%%%%%%Now for the primary and secondary cells matrix:
-%Primary cells (first frame <=16):
-matrix_x_primary=nan(frames*2,CELLS); matrix_y_primary=matrix_x_primary;
-% ii=1; kk=1;
-% for jj=1:CELLS
-%     if pos(ii,3)<=16
-%         for ll=0:120
-%             if pos(ii+ll,4)==jj && mod(pos(ii+ll,3),2)==1
-%                 matrix_x_primary(kk+ll,jj)=pos(ii+ll,1);%/pixelsize;
-%                 matrix_y_primary(kk+ll,jj)=pos(ii+ll,2);%/pixelsize;
-%             elseif pos(ii,4)==jj+1
-%                 break
-%             end
-%         end
-%         ii=ii+ll;
-%     end
-%     ii=ii+1;
-%     if ii>length(pos)
-%         break
-%     end
-% end
-% clear ii jj kk ll
-%Secondary cells:
-matrix_x_daughters=nan(frames,CELLS); matrix_y_daughters=matrix_x_daughters;
+matrix_x_primary=[]; matrix_y_primary=[];
+matrix_x_daughters=[]; matrix_y_daughters=[];
+
+for jj=1:CELLS
+    if dummy_frames(1,jj)<=16                               %Primary cells 
+                                                            %(first frame 
+                                                            %<=16)
+        matrix_x_primary=[matrix_x_primary matrix_x(:,jj)];
+        matrix_y_primary=[matrix_y_primary matrix_y(:,jj)];
+    else                                                    %Daughter cells
+        matrix_x_daughters=[matrix_x_daughters matrix_x(:,jj)];
+        matrix_y_daughters=[matrix_y_daughters matrix_y(:,jj)];
+    end
+end
+clear ii jj kk
 %%%%%%%Polar coordinates: rho=sqrt(x^2+y^2); phi=atan2(y,x)
 matrix_rho=sqrt(matrix_x.^2+matrix_y.^2); %microns
 [len_x,wid_x]=size(matrix_rho); 
