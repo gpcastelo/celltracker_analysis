@@ -9,7 +9,7 @@ pixelsize=0.55; %pix/micron
 path="C:\Users\G-mo10\Desktop\Test images nuclei Agata\CellTracker results\";
 filename = "TracksCoordinates_C0506A1R3_007.mat";
 filename=path+filename;
-load(filename); save_pos=pos;
+load(filename);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% %%%%%Fills matrices of positions:         cell 1 | cell 2 | cell 3 | etc.:%%%%%%
 %%%%%%% and frames                  frame 1
@@ -21,7 +21,7 @@ matrix_x=nan(frames,CELLS); matrix_y=matrix_x; dummy_frames=nan(frames,CELLS);
 for jj=1:CELLS
     kk=1;
     for ii=1:length(pos)
-        if pos(ii,4)==jj && mod(pos(ii,3),2)==1
+        if pos(ii,4)==jj
             matrix_x(ceil(pos(ii,3)/2),jj)=pos(ii,1)/pixelsize; %in microns
             matrix_y(ceil(pos(ii,3)/2),jj)=pos(ii,2)/pixelsize; %in microns
             dummy_frames(kk,jj)=pos(ii,3);
@@ -38,9 +38,9 @@ matrix_x_primary=[]; matrix_y_primary=[];
 matrix_x_daughters=[]; matrix_y_daughters=[];
 
 for jj=1:CELLS
-    if dummy_frames(1,jj)<=16                               %Primary cells 
+    if dummy_frames(1,jj)<=8                               %Primary cells 
                                                             %(first frame 
-                                                            %<=8*2)
+                                                            %<=8)
         matrix_x_primary=[matrix_x_primary matrix_x(:,jj)];
         matrix_y_primary=[matrix_y_primary matrix_y(:,jj)];
     else                                                    %Daughter cells
@@ -78,33 +78,20 @@ histogram(track_lengths)
 title('Length in frames of tracks')
 xlabel('Length (# of frames)'); ylabel('Count')
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% %%%%%%%%%%%%%%%%%% Velocities: %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%disp('Velocities in microns/s.')
-vel_x=diff(matrix_x)/dt;vel_y=diff(matrix_y)/dt; %microns/s
-%vel_x=matrix_x*3600;vel_y=matrix_y*3600;        %microns/h
-% % % % % % %Magnitude:
-vel_mag=sqrt(vel_x.^2+vel_y.^2);
-% % % % % % %Average:
-%disp('Average velocity for each cell:')
-vel_cell_avg=nanmean(vel_mag); %average velocity for each cell
-% figure
-% plot(vel_cell_avg,'b')
-% title('Average velocity for each cell')
-% xlabel('Cell'); ylabel('Velocity (\mu m/s)')
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Create matrix of instant velocities for all cells:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 vel_x_frame=[]; vel_y_frame=[];
 [len_x,~]=size(matrix_x);
 for aa=2:len_x
-    instant_vel_x=(matrix_x(aa,:)-matrix_x(aa-1,:))/dt;
+    instant_vel_x=(matrix_x(aa,:)-matrix_x(aa-1,:))/dt; %microns/s
     vel_x_frame=[vel_x_frame; instant_vel_x];
-    instant_vel_y=(matrix_y(aa,:)-matrix_y(aa-1,:))/dt;
+    instant_vel_y=(matrix_y(aa,:)-matrix_y(aa-1,:))/dt; %microns/s
     vel_y_frame=[vel_y_frame; instant_vel_y];
 end
 clear aa len_x instant_vel_x instant_vel_y
-vel_all=sqrt(vel_x_frame.^2+vel_y_frame.^2);
+vel_all=sqrt(vel_x_frame.^2+vel_y_frame.^2); %microns/s
 %%From the matrix of instant velocities, create vector of avg velocity:
 avg_vel_all=[];
 [len_x,~]=size(vel_all);
@@ -129,13 +116,13 @@ xlabel('Frame'); ylabel('Velocity (\mu m/s)')
 vel_x_primary=[]; vel_y_primary=[];
 [len_x,~]=size(matrix_x_primary);
 for aa=2:len_x
-    instant_vel_x=(matrix_x_primary(aa,:)-matrix_x_primary(aa-1,:))/dt;
+    instant_vel_x=(matrix_x_primary(aa,:)-matrix_x_primary(aa-1,:))/dt; %microns/s
     vel_x_primary=[vel_x_primary; instant_vel_x];
-    instant_vel_y=(matrix_y_primary(aa,:)-matrix_y_primary(aa-1,:))/dt;
+    instant_vel_y=(matrix_y_primary(aa,:)-matrix_y_primary(aa-1,:))/dt; %microns/s
     vel_y_primary=[vel_y_primary; instant_vel_y];
 end
 clear aa len_x instant_vel_x instant_vel_y
-vel_primary=sqrt(vel_x_primary.^2+vel_y_primary.^2);
+vel_primary=sqrt(vel_x_primary.^2+vel_y_primary.^2); %microns/s
 %%From the matrix of instant velocities, create vector of avg velocity:
 avg_vel_primary=[];
 [len_x,~]=size(vel_primary);
@@ -161,13 +148,13 @@ xlabel('Frame'); ylabel('Velocity (\mu m/s)')
 vel_x_daughters=[]; vel_y_daughters=[];
 [len_x,~]=size(matrix_x_daughters);
 for aa=2:len_x
-    instant_vel_x=(matrix_x_daughters(aa,:)-matrix_x_daughters(aa-1,:))/dt;
+    instant_vel_x=(matrix_x_daughters(aa,:)-matrix_x_daughters(aa-1,:))/dt; %microns/s
     vel_x_daughters=[vel_x_daughters; instant_vel_x];
-    instant_vel_y=(matrix_y_daughters(aa,:)-matrix_y_daughters(aa-1,:))/dt;
+    instant_vel_y=(matrix_y_daughters(aa,:)-matrix_y_daughters(aa-1,:))/dt; %microns/s
     vel_y_daughters=[vel_y_daughters; instant_vel_y];
 end
 clear aa len_x instant_vel_x instant_vel_y
-vel_daughters=sqrt(vel_x_daughters.^2+vel_y_daughters.^2);
+vel_daughters=sqrt(vel_x_daughters.^2+vel_y_daughters.^2); %microns/s
 %%From the matrix of instant velocities, create vector of avg velocity:
 avg_vel_daughters=[];
 [len_x,~]=size(vel_daughters);
