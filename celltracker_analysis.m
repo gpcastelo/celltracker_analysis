@@ -189,21 +189,23 @@ xlabel('Frame'); ylabel('Velocity (\mu m/s)')
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% MSD
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%% For all cells %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 SPACE_UNITS = 'µm';
 TIME_UNITS = 's';
-tracks = cell(CELLS, 1);
+tracks_all = cell(CELLS, 1);
 for mm = 1 : CELLS
     % Time
     time = (0 : frames-1)' * dt;
     % Positions
     X=[matrix_x(:,mm) matrix_y(:,mm)];
     % Store
-    tracks{mm} = [time X];
+    tracks_all{mm} = [time X];
 end
 clear mm X time
 %Initiate msd analyzer (2 means 2D):
 ma = msdanalyzer(2, SPACE_UNITS, TIME_UNITS);
-ma = ma.addAll(tracks);
+ma = ma.addAll(tracks_all);
 %Plot tracks:
 figure
 ma.plotTracks;
@@ -227,3 +229,54 @@ ma = ma.computeVCorr;
 ma.vcorr
 figure
 ma.plotMeanVCorr
+title('All cells')
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% %%%%%%%%%%%%%%%%%% For primary cells %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+[~,primaryCELLS]=size(matrix_x_primary);
+tracks_primary = cell(primaryCELLS, 1);
+for mm = 1 : primaryCELLS
+    % Time
+    time = (0 : frames-1)' * dt;
+    % Positions
+    X=[matrix_x_primary(:,mm) matrix_y_primary(:,mm)];
+    % Store
+    tracks_primary{mm} = [time X];
+end
+clear mm X time
+%Initiate msd analyzer (2 means 2D):
+ma_primary = msdanalyzer(2, SPACE_UNITS, TIME_UNITS);
+ma_primary = ma_primary.addAll(tracks_primary);
+%%%%%Velocities autocorrelation:
+ma_primary = ma_primary.computeVCorr;
+ma_primary.vcorr
+figure
+ma_primary.plotMeanVCorr
+title('Primary cells')
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% %%%%%%%%%%%%%%%%%% For daughter cells %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+[~,daughterCELLS]=size(matrix_x_daughters);
+tracks_daughters = cell(daughterCELLS, 1);
+for mm = 1 : daughterCELLS
+    % Time
+    time = (0 : frames-1)' * dt;
+    % Positions
+    X=[matrix_x_daughters(:,mm) matrix_y_daughters(:,mm)];
+    % Store
+    tracks_daughters{mm} = [time X];
+end
+clear mm X time
+%Initiate msd analyzer (2 means 2D):
+ma_daughters = msdanalyzer(2, SPACE_UNITS, TIME_UNITS);
+ma_daughters = ma_daughters.addAll(tracks_daughters);
+%%%%%Velocities autocorrelation:
+ma_daughters = ma_daughters.computeVCorr;
+ma_daughters.vcorr
+figure
+ma_daughters.plotMeanVCorr
+title('Daughter cells')
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%               THE                                                       %
+%                           END                                           %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
