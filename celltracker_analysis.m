@@ -187,53 +187,6 @@ scatter(1:59,avg_vel_daughters,'r','filled')
 title('Average velocity for each frame: Daughter cells')
 xlabel('Frame'); ylabel('Velocity (\mu m/s)')
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% %%%%%%%%%%%%%%%%%%   Chemotaxis graph:   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-chem_mat_x=[];chem_mat_y=[];
-for bb=1:CELLS
-    if matrix_x(1,bb)>0
-        dummy_chem_x=matrix_x(:,bb)-matrix_x(1,bb);
-        chem_mat_x=[chem_mat_x dummy_chem_x];
-        dummy_chem_y=matrix_y(:,bb)-matrix_y(1,bb);
-        chem_mat_y=[chem_mat_y dummy_chem_y];
-    else
-        for cc=1:frames
-            if matrix_x(cc,bb)>0
-                dummy_chem_x=matrix_x(:,bb)-matrix_x(cc,bb);
-                chem_mat_x=[chem_mat_x dummy_chem_x];
-                dummy_chem_y=matrix_y(:,bb)-matrix_y(cc,bb);
-                chem_mat_y=[chem_mat_y dummy_chem_y];
-                break
-            else
-                continue
-            end
-        end
-    end
-end
-clear bb cc dummy_chem_x dummy_chem_y
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-SPACE_UNITS = 'µm';
-TIME_UNITS = 's';
-tracks_chem = cell(primaryCELLS, 1);
-for mm = 1 : primaryCELLS
-    % Time
-    time = (0 : frames-1)' * dt;
-    % Positions
-    X=[chem_mat_x(:,mm) chem_mat_y(:,mm)];
-    % Store
-    tracks_chem{mm} = [time X];
-end
-clear mm X time
-%Initiate msd analyzer (2 means 2D):
-ma_chem = msdanalyzer(2, SPACE_UNITS, TIME_UNITS);
-ma_chem = ma_chem.addAll(tracks_chem);
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% Plot tracks:
-figure
-ma_chem.plotTracks;
-ma_chem.labelPlotTracks;
-title('Chemotaxis graph')
-xlabel('X (\mu m)'); ylabel('Y (\mu m)')
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% MSD
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -304,26 +257,73 @@ title('Primary cells')
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% %%%%%%%%%%%%%%%%%% For daughter cells %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-[~,daughterCELLS]=size(matrix_x_daughters);
-tracks_daughters = cell(daughterCELLS, 1);
-for mm = 9 : daughterCELLS
-    % Time
-    time = (9 : frames-1)' * dt;
-    % Positions
-    X=[matrix_x_daughters(9:end-1,mm) matrix_y_daughters(9:end-1,mm)];
-    % Store
-    tracks_daughters{mm-8} = [time X];
+% [~,daughterCELLS]=size(matrix_x_daughters);
+% tracks_daughters = cell(daughterCELLS, 1);
+% for mm = 9 : daughterCELLS
+%     % Time
+%     time = (9 : frames-1)' * dt;
+%     % Positions
+%     X=[matrix_x_daughters(9:end-1,mm) matrix_y_daughters(9:end-1,mm)];
+%     % Store
+%     tracks_daughters{mm-8} = [time X];
+% end
+% %clear mm X time
+% %Initiate msd analyzer (2 means 2D):
+% ma_daughters = msdanalyzer(2, SPACE_UNITS, TIME_UNITS);
+% ma_daughters = ma_daughters.addAll(tracks_daughters);
+% %%%%%Velocities autocorrelation:
+% ma_daughters = ma_daughters.computeVCorr;
+% ma_daughters.vcorr;
+% figure
+% ma_daughters.plotMeanVCorr
+% title('Daughter cells')
+%% %%%%%%%%%%%%%%%%%%   Chemotaxis graph:   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+chem_mat_x=[];chem_mat_y=[];
+for bb=1:CELLS
+    if matrix_x(1,bb)>0
+        dummy_chem_x=matrix_x(:,bb)-matrix_x(1,bb);
+        chem_mat_x=[chem_mat_x dummy_chem_x];
+        dummy_chem_y=matrix_y(:,bb)-matrix_y(1,bb);
+        chem_mat_y=[chem_mat_y dummy_chem_y];
+    else
+        for cc=1:frames
+            if matrix_x(cc,bb)>0
+                dummy_chem_x=matrix_x(:,bb)-matrix_x(cc,bb);
+                chem_mat_x=[chem_mat_x dummy_chem_x];
+                dummy_chem_y=matrix_y(:,bb)-matrix_y(cc,bb);
+                chem_mat_y=[chem_mat_y dummy_chem_y];
+                break
+            else
+                continue
+            end
+        end
+    end
 end
-%clear mm X time
+clear bb cc dummy_chem_x dummy_chem_y
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+SPACE_UNITS = 'µm';
+TIME_UNITS = 's';
+tracks_chem = cell(primaryCELLS, 1);
+for mm = 1 : primaryCELLS
+    % Time
+    time = (0 : frames-1)' * dt;
+    % Positions
+    X=[chem_mat_x(:,mm) chem_mat_y(:,mm)];
+    % Store
+    tracks_chem{mm} = [time X];
+end
+clear mm X time
 %Initiate msd analyzer (2 means 2D):
-ma_daughters = msdanalyzer(2, SPACE_UNITS, TIME_UNITS);
-ma_daughters = ma_daughters.addAll(tracks_daughters);
-%%%%%Velocities autocorrelation:
-ma_daughters = ma_daughters.computeVCorr;
-ma_daughters.vcorr;
+ma_chem = msdanalyzer(2, SPACE_UNITS, TIME_UNITS);
+ma_chem = ma_chem.addAll(tracks_chem);
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Plot tracks:
 figure
-ma_daughters.plotMeanVCorr
-title('Daughter cells')
+ma_chem.plotTracks;
+ma_chem.labelPlotTracks;
+title('Chemotaxis graph')
+xlabel('X (\mu m)'); ylabel('Y (\mu m)')
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %               THE                                                       %
 %                           END                                           %
