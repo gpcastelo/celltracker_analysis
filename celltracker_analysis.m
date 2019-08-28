@@ -190,14 +190,27 @@ xlabel('Frame'); ylabel('Velocity (\mu m/s)')
 %% %%%%%%%%%%%%%%%%%%   Chemotaxis graph:   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 chem_mat_x=[];chem_mat_y=[];
-[~,primaryCELLS]=size(matrix_x_primary);
-for bb=1:primaryCELLS
-    dummy_chem_x=matrix_x_primary(:,bb)-matrix_x_primary(1,bb);
-    chem_mat_x=[chem_mat_x dummy_chem_x];
-    dummy_chem_y=matrix_y_primary(:,bb)-matrix_y_primary(1,bb);
-    chem_mat_y=[chem_mat_y dummy_chem_y];
+for bb=1:CELLS
+    if matrix_x(1,bb)>0
+        dummy_chem_x=matrix_x(:,bb)-matrix_x(1,bb);
+        chem_mat_x=[chem_mat_x dummy_chem_x];
+        dummy_chem_y=matrix_y(:,bb)-matrix_y(1,bb);
+        chem_mat_y=[chem_mat_y dummy_chem_y];
+    else
+        for cc=1:frames
+            if matrix_x(cc,bb)>0
+                dummy_chem_x=matrix_x(:,bb)-matrix_x(cc,bb);
+                chem_mat_x=[chem_mat_x dummy_chem_x];
+                dummy_chem_y=matrix_y(:,bb)-matrix_y(cc,bb);
+                chem_mat_y=[chem_mat_y dummy_chem_y];
+                break
+            else
+                continue
+            end
+        end
+    end
 end
-clear bb dummy_chem_x dummy_chem_y
+clear bb cc dummy_chem_x dummy_chem_y
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 SPACE_UNITS = 'µm';
 TIME_UNITS = 's';
